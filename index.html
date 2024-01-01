@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fighter Jet Simulator</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+    <script>
+        function setup(){
+            createCanvas(400, 400)
+        }
+        var e=[[Math.PI/2, 100]]
+        var r=200
+        var b=[]
+        var c=0
+        var f=100
+        var l=3
+        var s=0
+        a=50
+        alert("Controls:\na to steer left, uses 50 fuel\nd to steer right, uses 50 fuel\nspace to shoot a bullet\ns to upgrade radar for $500\nz to buy 20 bullets for $50")    
+        function draw(){
+            background(0)
+            fill(0, 255, 0)
+            textAlign(LEFT, BOTTOM)
+            noStroke()
+            text("Cash: $"+c+"\nFuel: "+f+"\nAmmo: "+a+"\nLives: "+l+"\nScore: "+s, 20, 200)
+            angleMode(DEGREES)
+            fill(120, 200, 0)
+            arc(200, 200, r, r, 225, 315, PIE)
+            fill("blue")
+            beginShape()
+            vertex(200, 180)
+            vertex(210, 210)
+            vertex(200, 200)
+            vertex(190, 210)
+            endShape(CLOSE)
+            stroke(255, 0, 0, 80)
+            strokeWeight(10)
+            for(var i=0;i<e.length;i++){
+                if(e[i][1]<0){
+                    e.splice(i, 1)
+                    l--
+                    if(l<1){
+                        alert("Game Over\nFinal Score: "+s)
+                        location.reload()
+                    }
+                }
+                if(e[i][1]<=r/2){
+                    point(200+Math.cos(e[i][0])*e[i][1], 200-Math.sin(e[i][0])*e[i][1])
+                }
+                for(var j=0;j<b.length;j++){
+                    console.log(e[i]+"  "+i)
+                    if(b[j][1]>200){
+                        b.splice(b, 1)
+                    }
+                    try{if(b[j][0]==e[i][0] && b[j][1]>e[i][1]){
+                        b.splice(j, 1)
+                        e.splice(i, 1)
+                        c+=50
+                        s+=50
+                    }}catch{}
+                }
+            }
+            stroke(100)
+            strokeWeight(5)
+            for(var i=0;i<b.length;i++){
+                if(b[i][1]<=r/2){
+                    point(200+Math.cos(b[i][0])*b[i][1], 200-Math.sin(b[i][0])*b[i][1])
+                }
+            }
+        }
+        function keyTyped(){
+            if(key==" " && a>0){
+                b.push([Math.PI/2, 20])
+                a--;
+            }else if(key=="a" && f>50){
+                for(var i=0;i<e.length;i++){
+                    e[i][0]-=22.5*Math.PI/180
+                    if(e[i][0]<Math.PI/4){
+                        e.splice(i, 1)
+                    }
+                }
+                for(var i=0;i<b.length;i++){
+                    b[i][0]-=22.5*Math.PI/180
+                    if(b[i][0]<Math.PI/4){
+                        b.splice(i, 1)
+                    }
+                }
+                f-=50;
+            }else if(key=="d" && f>50){
+                for(var i=0;i<e.length;i++){
+                    e[i][0]+=22.5*Math.PI/180
+                    if(e[i][0]>Math.PI/4*3){
+                        e.splice(i, 1)
+                    }
+                }
+                for(var i=0;i<b.length;i++){
+                    b[i][0]+=22.5*Math.PI/180
+                    if(b[i][0]>Math.PI/4*3){
+                        b.splice(i, 1)
+                    }
+                }
+                f-=50;
+            }else if(key=="s" && c>=500){
+                r+=50
+                c-=500
+            }else if(key=="z" && c>=50){
+                a+=20
+                c-=50
+            }
+        }
+        setInterval(function(){
+            for(var i=0;i<b.length;i++){b[i][1]++}
+            for(var i=0;i<e.length;i++){e[i][1]--}
+            if(f<100){f+=1}
+        }, 50)
+        setInterval(function(){
+            x=s+1000
+            while(x>950){
+                e.push([(Math.floor(Math.random()*5)/4*90+45)/180*Math.PI, r/2])
+                x-=1000
+            }
+        }, 1000)
+    </script>
+</body>
+</html>
